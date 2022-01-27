@@ -27,10 +27,13 @@ public class UiManager : MonoBehaviour
     private void Awake()
     {
         um = this;
-
-
-
         DontDestroyOnLoad(this.gameObject);
+        
+    }
+
+    private void Start()
+    {
+        StartCoroutine(Init());
     }
     #endregion
 
@@ -91,6 +94,7 @@ public class UiManager : MonoBehaviour
 
     IEnumerator MenuTransition (int _id)
     {
+        AudioManager.am.ui[0].mute = true;
         foreach (MenuPanel panel in menuPanels)
         {
             panel.canvasGroup.alpha = 0f;
@@ -104,8 +108,9 @@ public class UiManager : MonoBehaviour
         menuPanels[_id].canvasGroup.blocksRaycasts = true;
         EventSystem.current.SetSelectedGameObject(menuPanels[_id].firstSelected);
 
-        yield return new WaitForSecondsRealtime(transitionTime);
 
+        yield return new WaitForSecondsRealtime(transitionTime);
+        AudioManager.am.ui[0].mute = false;
         // Transition End Animation
 
     }
@@ -120,6 +125,13 @@ public class UiManager : MonoBehaviour
         SceneManager.LoadScene(_i);
 
         
+    }
+
+    IEnumerator Init()
+    {
+        AudioManager.am.ui[0].mute = true;
+        yield return new WaitForSecondsRealtime(0.4f);
+        AudioManager.am.ui[0].mute = false;
     }
 
 
