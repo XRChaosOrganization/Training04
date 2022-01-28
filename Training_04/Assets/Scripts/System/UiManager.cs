@@ -130,8 +130,15 @@ public class UiManager : MonoBehaviour
     IEnumerator Init()
     {
         AudioManager.am.ui[0].mute = true;
+        foreach (AudioSource track in AudioManager.am.bgm)
+            track.Stop();
+        AudioManager.am.bgm[1].volume = 0;
+
         yield return new WaitForSecondsRealtime(0.4f);
         AudioManager.am.ui[0].mute = false;
+
+        foreach (AudioSource track in AudioManager.am.bgm)
+            track.Play();
     }
 
 
