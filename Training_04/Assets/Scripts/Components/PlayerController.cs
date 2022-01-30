@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask grappables;
     private float angle;
     public float timeTest;
+    public GameObject aimCursor;
+    private float aimDistance = 2;
     
     void Awake()
     {
@@ -30,6 +32,17 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+        if (isGrappling == false)
+        {
+            aimCursor.GetComponent<SpriteRenderer>().enabled = true;
+            Vector2 mousePos = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 grappleDir = mousePos - (Vector2)firePoint.position;
+            aimCursor.transform.position = (Vector2)transform.position + grappleDir.normalized * aimDistance;
+        }
+        else
+        {
+            aimCursor.GetComponent<SpriteRenderer>().enabled = false;
+        }
         if (Input.GetKeyDown(KeyCode.Mouse0) && isGrappling == false)
         {
             Grapple();
@@ -130,7 +143,6 @@ public class PlayerController : MonoBehaviour
         {
             if (GetclosestCorner(_hit.collider.transform,_hit.point) != (Vector2)lineRenderer.GetPosition(1))
             {
-                Debug.Log(GetclosestCorner(_hit.collider.transform,_hit.point));
                 lineRenderer.positionCount++;
                 for (int i = lineRenderer.positionCount -1; i > 1; i--)
                 {
@@ -144,9 +156,7 @@ public class PlayerController : MonoBehaviour
     }
     void WrapRope()
     {
-        Debug.Log("wrap");
         distanceJoint2D.connectedAnchor = lineRenderer.GetPosition(1);
-        
         distanceJoint2D.distance = grappleMaxDistance- Vector2.Distance(lineRenderer.GetPosition(1),lineRenderer.GetPosition(2));
         grappleMaxDistance = distanceJoint2D.distance;
         distanceJoint2D.distance = (distanceJoint2D.connectedAnchor - (Vector2)transform.position).magnitude;
@@ -154,7 +164,6 @@ public class PlayerController : MonoBehaviour
     }
     void UnwrapRope()
     {
-        Debug.Log("unwrap");
         float distanceToAdd = Vector2.Distance(lineRenderer.GetPosition(1), lineRenderer.GetPosition(2));
         distanceJoint2D.connectedAnchor = lineRenderer.GetPosition(2);
         for (int i = 1; i < lineRenderer.positionCount - 1; i++)
@@ -197,35 +206,25 @@ public class PlayerController : MonoBehaviour
         }
         return returnCorner;
     }
-    Vector2 GetSecondclosestCorner(Transform rect)
+    Vector2 LerpTongue(Vector2 _grapplePoint, float _time)
     {
-        Vector2 cornerAPos = (rect.position.x - rect.localScale.x / 2) * Vector2.right + (rect.position.y + rect.localScale.y / 2) * Vector2.up;
-        Vector2 cornerBPos = (rect.position.x + rect.localScale.x / 2) * Vector2.right + (rect.position.y + rect.localScale.y / 2) * Vector2.up;
-        Vector2 cornerCPos = (rect.position.x - rect.localScale.x / 2) * Vector2.right + (rect.position.y - rect.localScale.y / 2) * Vector2.up;
-        Vector2 cornerDPos = (rect.position.x + rect.localScale.x / 2) * Vector2.right + (rect.position.y - rect.localScale.y / 2) * Vector2.up;
-        float distA = (cornerAPos - (Vector2)lineRenderer.GetPosition(1)).magnitude;
-        float distB = (cornerBPos - (Vector2)lineRenderer.GetPosition(1)).magnitude;
-        float distC = (cornerCPos - (Vector2)lineRenderer.GetPosition(1)).magnitude;
-        float distD = (cornerDPos - (Vector2)lineRenderer.GetPosition(1)).magnitude;
-        float minvalue = Mathf.Min(distA, distB, distC, distD);
-
-        if (minvalue == distA)
-        {
-            return cornerAPos;
-        }
-        if (minvalue == distB)
-        {
-            return cornerBPos;
-        }
-        if (minvalue == distC)
-        {
-            return cornerCPos;
-        }
-        if (minvalue == distD)
-        {
-            return cornerDPos;
-        }
-        return Vector2.one;
+        float x = Mathf.Lerp(transform.position.x, _grapplePoint.x, _time) * Time.deltaTime;
+        float y = Mathf.Lerp(transform.position.y, _grapplePoint.y, _time) * Time.deltaTime;
+        return new Vector2(x, y);
     }
 
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.CompareTag("DeathZone"))
+        {
+            Destroy(this.gameObject);
+            Debug.Log("GameOver");
+            //GameOver
+        }
+        if (col.CompareTag("Finish"))
+        {
+            Debug.Log("Level Finished !!");
+            //Win screen
+        }
+    }
 }
