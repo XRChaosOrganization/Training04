@@ -20,8 +20,9 @@ public class PlayerController : MonoBehaviour
     private float angle;
     public float timeTest;
     public GameObject aimCursor;
-    private float aimDistance = 2;
+    private float aimDistance = 4;
     public SortingLayer Default;
+    public Animator animator;
     
     void Awake()
     {
@@ -34,12 +35,16 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+        
         if (isGrappling == false)
         {
             aimCursor.GetComponent<SpriteRenderer>().enabled = true;
             Vector2 mousePos = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector2 grappleDir = mousePos - (Vector2)firePoint.position;
             aimCursor.transform.position = (Vector2)firePoint.position + grappleDir.normalized * aimDistance;
+            float angle = Vector2.SignedAngle(Vector2.right, grappleDir);
+            transform.eulerAngles = new Vector3 (0, 0, angle);
+            
         }
         else
         {
@@ -55,7 +60,11 @@ public class PlayerController : MonoBehaviour
         }
         if (isGrappling)
         {
+            Vector2 grappleDir = lineRenderer.GetPosition(1) - firePoint.position;
+            float angle = Vector2.SignedAngle(Vector2.right, grappleDir);
+            transform.eulerAngles = new Vector3(0, 0, angle);
 
+            animator.SetBool("Isgrappling" , true);
             UpdateRopePhysics();
             if (Input.GetAxisRaw("Horizontal") != 0)
             {
@@ -98,18 +107,29 @@ public class PlayerController : MonoBehaviour
         // LERP A AJOUTER
         Vector2 mousePos = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 grappleDir = mousePos - (Vector2)firePoint.position;
-        RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, grappleDir.normalized,grappleMaxDistance);
+        RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, grappleDir.normalized,grappleMaxDistance,grappables);
         if (_hit.collider != null)
         {
-            grapplePoint = _hit.point;
-            lineRenderer.SetPosition(0, firePoint.position);
-            lineRenderer.SetPosition(1, grapplePoint);
-            distanceJoint2D.connectedAnchor = grapplePoint;
-            Vector2 distance = grapplePoint - (Vector2)firePoint.position;
-            distanceJoint2D.distance = distance.magnitude;
-            distanceJoint2D.enabled = true;
-            lineRenderer.enabled = true;
-            isGrappling = true;
+            if (_hit.collider.tag == "Collectibles")
+            {
+                //Sound
+                StartCoroutine(FailToGrapple(_hit.point));
+                Destroy(_hit.collider.gameObject);
+                Debug.Log("collect");
+            }
+            else
+            {
+                grapplePoint = _hit.point;
+                lineRenderer.SetPosition(0, firePoint.position);
+                lineRenderer.SetPosition(1, grapplePoint);
+                distanceJoint2D.connectedAnchor = grapplePoint;
+                Vector2 distance = grapplePoint - (Vector2)firePoint.position;
+                distanceJoint2D.distance = distance.magnitude;
+                distanceJoint2D.enabled = true;
+                lineRenderer.enabled = true;
+                isGrappling = true;
+            }
+            
         }
         else
         {
@@ -137,9 +157,11 @@ public class PlayerController : MonoBehaviour
         lineRenderer.enabled = false;
         grappleMaxDistance = grappleRange;
         distanceJoint2D.distance = grappleMaxDistance;
+        animator.SetBool("Isgrappling", false);
     }
     void UpdateRopePhysics()
     {
+        
         Vector2 anchorDir = lineRenderer.GetPosition(1) - firePoint.position;
         RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, anchorDir, Vector2.Distance(firePoint.position, distanceJoint2D.connectedAnchor) -0.07f,grappables);
         if (_hit )
@@ -159,6 +181,7 @@ public class PlayerController : MonoBehaviour
     }
     void WrapRope()
     {
+       
         distanceJoint2D.connectedAnchor = lineRenderer.GetPosition(1);
         distanceJoint2D.distance = grappleMaxDistance- Vector2.Distance(lineRenderer.GetPosition(1),lineRenderer.GetPosition(2));
         grappleMaxDistance = distanceJoint2D.distance;
@@ -167,6 +190,7 @@ public class PlayerController : MonoBehaviour
     }
     void UnwrapRope()
     {
+        
         float distanceToAdd = Vector2.Distance(lineRenderer.GetPosition(1), lineRenderer.GetPosition(2));
         distanceJoint2D.connectedAnchor = lineRenderer.GetPosition(2);
         for (int i = 1; i < lineRenderer.positionCount - 1; i++)
