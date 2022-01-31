@@ -321,10 +321,10 @@ MonoBehaviour:
   lineRenderer: {fileID: 2071011729813205923}
   distanceJoint2D: {fileID: 2071011729813205924}
   firePoint: {fileID: 4940684220955868710}
-  aimCursor: {fileID: 0}
+  aimCursor: {fileID: 7415572179975501798}
   animator: {fileID: 0}
-  skin: {fileID: 0}
-  deathParticles: {fileID: 0}
+  skin: {fileID: 1757764815323236351}
+  deathParticles: {fileID: 863983384729102317}
   droolParticles: {fileID: 0}
   grappleRange: 0
   swingForce: 2
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 863983384729102317}
   - component: {fileID: 6181294694392889979}
   m_Layer: 2
-  m_Name: ParticleSystem
+  m_Name: DeathParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
