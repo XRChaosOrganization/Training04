@@ -320,16 +320,19 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   lineRenderer: {fileID: 2071011729813205923}
   distanceJoint2D: {fileID: 2071011729813205924}
-  grappleRange: 0
   firePoint: {fileID: 4940684220955868710}
+  aimCursor: {fileID: 0}
+  animator: {fileID: 0}
+  skin: {fileID: 0}
+  deathParticles: {fileID: 0}
+  droolParticles: {fileID: 0}
+  grappleRange: 0
   swingForce: 2
   tongueLengthSpeed: 0.05
   grappables:
     serializedVersion: 2
     m_Bits: 0
   timeTest: 0
-  aimCursor: {fileID: 0}
-  animator: {fileID: 0}
 --- !u!1 &5488555267473763141
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +381,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
