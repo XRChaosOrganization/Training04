@@ -250,6 +250,12 @@ public class PlayerController : MonoBehaviour
         }
         if (col.CompareTag("Finish"))
         {
+            if (col.gameObject.GetComponent<ParticlesTrigger>() !=  null)
+            {
+                col.gameObject.GetComponent<ParticlesTrigger>().Play();
+                AudioManager.am.PlaySFX(AudioManager.SFX.Gameplay_Win);
+            }
+            
             Debug.Log("Level Finished !!");
             //Win screen
         }
