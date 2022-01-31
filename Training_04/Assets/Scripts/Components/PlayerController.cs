@@ -103,8 +103,8 @@ public class PlayerController : MonoBehaviour
 
     public void Grapple()
     {
-        // LOOK At A AJOUTER
         // LERP A AJOUTER
+        AudioManager.am.PlaySFX(AudioManager.SFX.Player_Tongue);
         Vector2 mousePos = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 grappleDir = mousePos - (Vector2)firePoint.position;
         RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, grappleDir.normalized,grappleMaxDistance,grappables);
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             if (_hit.collider.tag == "Collectibles")
             {
-                //Sound
+                AudioManager.am.PlaySFX(AudioManager.SFX.Gameplay_Fly);
                 StartCoroutine(FailToGrapple(_hit.point));
                 Destroy(_hit.collider.gameObject);
                 Debug.Log("collect");
@@ -244,8 +244,9 @@ public class PlayerController : MonoBehaviour
     {
         if (col.CompareTag("DeathZone"))
         {
+            AudioManager.am.PlaySFX(AudioManager.SFX.Player_Death);
             Destroy(this.gameObject);
-            Debug.Log("GameOver");
+            
             //GameOver
         }
         if (col.CompareTag("Finish"))
