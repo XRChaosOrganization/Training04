@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("DeathZone"))
+        if (col.CompareTag("DeathZone")) 
         {
             deathParticles.Play();
             skin.SetActive(false);

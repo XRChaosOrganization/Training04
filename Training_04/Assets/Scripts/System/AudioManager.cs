@@ -32,6 +32,8 @@ public class AudioManager : MonoBehaviour
                 break;
             case SFX.Gameplay_Win:
                 gameplay[1].Play();
+                bgm[0].Stop();
+                bgm[1].volume = 1;
                 break;
             case SFX.Player_Death:
                 player[1].Play();
