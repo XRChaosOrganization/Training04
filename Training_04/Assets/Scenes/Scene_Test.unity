@@ -1939,6 +1939,10 @@ PrefabInstance:
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 2071011729813205924, guid: 55ebcf1fa9f5cc54db1809ed2171ff86, type: 3}
+      propertyPath: m_Distance
+      value: 9.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071011729813205924, guid: 55ebcf1fa9f5cc54db1809ed2171ff86, type: 3}
       propertyPath: m_EnableCollision
       value: 1
       objectReference: {fileID: 0}
@@ -1948,7 +1952,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2071011729813205924, guid: 55ebcf1fa9f5cc54db1809ed2171ff86, type: 3}
       propertyPath: m_AutoConfigureDistance
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2071011729813205927, guid: 55ebcf1fa9f5cc54db1809ed2171ff86, type: 3}
       propertyPath: timeTest

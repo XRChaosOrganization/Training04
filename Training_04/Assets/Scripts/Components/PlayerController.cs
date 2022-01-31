@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float timeTest;
     public GameObject aimCursor;
     private float aimDistance = 2;
+    public SortingLayer Default;
     
     void Awake()
     {
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
         lineRenderer.enabled = false;
         ReleaseRope();
         Time.timeScale = timeTest;
+        lineRenderer.sortingLayerName = "Default";
     }
     void Update()
     {
@@ -37,7 +39,7 @@ public class PlayerController : MonoBehaviour
             aimCursor.GetComponent<SpriteRenderer>().enabled = true;
             Vector2 mousePos = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector2 grappleDir = mousePos - (Vector2)firePoint.position;
-            aimCursor.transform.position = (Vector2)transform.position + grappleDir.normalized * aimDistance;
+            aimCursor.transform.position = (Vector2)firePoint.position + grappleDir.normalized * aimDistance;
         }
         else
         {
@@ -53,6 +55,7 @@ public class PlayerController : MonoBehaviour
         }
         if (isGrappling)
         {
+
             UpdateRopePhysics();
             if (Input.GetAxisRaw("Horizontal") != 0)
             {
@@ -85,7 +88,7 @@ public class PlayerController : MonoBehaviour
 ;        }
         if (lineRenderer.enabled)
         {
-            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(0, firePoint.position);
         }
     }
 
@@ -99,10 +102,10 @@ public class PlayerController : MonoBehaviour
         if (_hit.collider != null)
         {
             grapplePoint = _hit.point;
-            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(0, firePoint.position);
             lineRenderer.SetPosition(1, grapplePoint);
             distanceJoint2D.connectedAnchor = grapplePoint;
-            Vector2 distance = grapplePoint - (Vector2)transform.position;
+            Vector2 distance = grapplePoint - (Vector2)firePoint.position;
             distanceJoint2D.distance = distance.magnitude;
             distanceJoint2D.enabled = true;
             lineRenderer.enabled = true;
@@ -110,7 +113,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Vector2 failedGrapplePoint = (Vector2)transform.position + grappleDir.normalized * grappleMaxDistance;
+            Vector2 failedGrapplePoint = (Vector2)firePoint.position + grappleDir.normalized * grappleMaxDistance;
             StartCoroutine(FailToGrapple(failedGrapplePoint));
         }
     }
@@ -118,7 +121,7 @@ public class PlayerController : MonoBehaviour
     public IEnumerator FailToGrapple(Vector2 _grapplePoint)
     {
         
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, firePoint.position);
         lineRenderer.SetPosition(1, _grapplePoint);
         lineRenderer.enabled = true;
         yield return new WaitForSeconds(.2f);
@@ -127,8 +130,8 @@ public class PlayerController : MonoBehaviour
     public void ReleaseRope()
     {
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position);
+        lineRenderer.SetPosition(0, firePoint.position);
+        lineRenderer.SetPosition(1, firePoint.position);
         isGrappling = false;
         distanceJoint2D.enabled = false;
         lineRenderer.enabled = false;
@@ -137,8 +140,8 @@ public class PlayerController : MonoBehaviour
     }
     void UpdateRopePhysics()
     {
-        Vector2 anchorDir = lineRenderer.GetPosition(1) - transform.position;
-        RaycastHit2D _hit = Physics2D.Raycast(transform.position, anchorDir, Vector2.Distance(transform.position, distanceJoint2D.connectedAnchor) -0.07f,grappables);
+        Vector2 anchorDir = lineRenderer.GetPosition(1) - firePoint.position;
+        RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, anchorDir, Vector2.Distance(firePoint.position, distanceJoint2D.connectedAnchor) -0.07f,grappables);
         if (_hit )
         {
             if (GetclosestCorner(_hit.collider.transform,_hit.point) != (Vector2)lineRenderer.GetPosition(1))
@@ -159,7 +162,7 @@ public class PlayerController : MonoBehaviour
         distanceJoint2D.connectedAnchor = lineRenderer.GetPosition(1);
         distanceJoint2D.distance = grappleMaxDistance- Vector2.Distance(lineRenderer.GetPosition(1),lineRenderer.GetPosition(2));
         grappleMaxDistance = distanceJoint2D.distance;
-        distanceJoint2D.distance = (distanceJoint2D.connectedAnchor - (Vector2)transform.position).magnitude;
+        distanceJoint2D.distance = (distanceJoint2D.connectedAnchor - (Vector2)firePoint.position).magnitude;
         
     }
     void UnwrapRope()
@@ -173,7 +176,7 @@ public class PlayerController : MonoBehaviour
         lineRenderer.positionCount--;
         distanceJoint2D.distance = grappleMaxDistance + distanceToAdd;
         grappleMaxDistance = distanceJoint2D.distance;
-        distanceJoint2D.distance = (distanceJoint2D.connectedAnchor - (Vector2)transform.position).magnitude;
+        distanceJoint2D.distance = (distanceJoint2D.connectedAnchor - (Vector2)firePoint.position).magnitude;
         
     }
     Vector2 GetclosestCorner(Transform rect, Vector2 _hitPoint)
@@ -208,8 +211,8 @@ public class PlayerController : MonoBehaviour
     }
     Vector2 LerpTongue(Vector2 _grapplePoint, float _time)
     {
-        float x = Mathf.Lerp(transform.position.x, _grapplePoint.x, _time) * Time.deltaTime;
-        float y = Mathf.Lerp(transform.position.y, _grapplePoint.y, _time) * Time.deltaTime;
+        float x = Mathf.Lerp(firePoint.position.x, _grapplePoint.x, _time) * Time.deltaTime;
+        float y = Mathf.Lerp(firePoint.position.y, _grapplePoint.y, _time) * Time.deltaTime;
         return new Vector2(x, y);
     }
 
