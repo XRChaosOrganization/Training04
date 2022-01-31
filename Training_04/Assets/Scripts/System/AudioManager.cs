@@ -8,7 +8,7 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager am;
 
-    public enum SFX { UI_Confirm, UI_Navigate, Player_Tongue, Player_Death, Gameplay_Fly, Gameplay_Win, Gameplay_GameOver}
+    public enum SFX { UI_Confirm, UI_Navigate, Player_Tongue, Player_Death, Gameplay_Fly, Gameplay_Win}
 
     public List<AudioSource> bgm;
     public List<AudioSource> ui;
@@ -29,9 +29,6 @@ public class AudioManager : MonoBehaviour
         {
             case SFX.Gameplay_Fly:
                 gameplay[0].Play();
-                break;
-            case SFX.Gameplay_GameOver:
-                gameplay[2].Play();
                 break;
             case SFX.Gameplay_Win:
                 gameplay[1].Play();

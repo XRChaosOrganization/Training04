@@ -4,25 +4,39 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    [Space]
+    [Header("Components")]
+    [Space]
     public Camera mainCamera;
     public LineRenderer lineRenderer;
     public DistanceJoint2D distanceJoint2D;
+    private Rigidbody2D rb;
+    public Transform firePoint;
+    public static PlayerController playerC;
+    public GameObject aimCursor;
+    public Animator animator;
+
+    public GameObject skin;
+    public ParticleSystem deathParticles;
+    public ParticleSystem droolParticles;
+
+    [Space]
+    [Header("Rope & Metrics")]
+    [Space]
+
     public float grappleRange;
     private float grappleMaxDistance;
-    public Transform firePoint;
     private Vector2 grapplePoint;
     private bool isGrappling;
     public float swingForce;
     public float tongueLengthSpeed;
-    public static PlayerController playerC;
     public LayerMask grappables;
     private float angle;
     public float timeTest;
-    public GameObject aimCursor;
     private float aimDistance = 4;
     public SortingLayer Default;
-    public Animator animator;
+    
+
     
     void Awake()
     {
@@ -137,7 +151,6 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(FailToGrapple(failedGrapplePoint));
         }
     }
-
     public IEnumerator FailToGrapple(Vector2 _grapplePoint)
     {
         
@@ -240,14 +253,17 @@ public class PlayerController : MonoBehaviour
         return new Vector2(x, y);
     }
 
+
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("DeathZone"))
         {
+            deathParticles.Play();
+            skin.SetActive(false);
             AudioManager.am.PlaySFX(AudioManager.SFX.Player_Death);
-            Destroy(this.gameObject);
-            
-            //GameOver
+            Debug.Log("GameOver");
+            //GameOver Screen
         }
         if (col.CompareTag("Finish"))
         {
